@@ -1,0 +1,213 @@
+openapi: 3.0.3
+info:
+  title: Music API
+  description: API для управления песнями (CRUD операции и фильтрация)
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8080
+paths:
+  /song/add:
+    post:
+      summary: Добавление новой песни
+      description: Создает новую песню в базе данных.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Song'
+      responses:
+        "201":
+          description: Песня успешно добавлена
+        "500":
+          description: Ошибка на сервере
+
+  /song/edit/{id}:
+    put:
+      summary: Изменение информации о песне
+      description: Обновляет информацию о песне по ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID песни
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSong'
+      responses:
+        "201":
+          description: Песня успешно обновлена
+        "500":
+          description: Ошибка на сервере
+
+  /song/details/{song_name}/{performer_name}:
+    get:
+      summary: Получение информации о песне
+      description: Возвращает информацию о песне по ее названию и имени исполнителя.
+      parameters:
+        - name: song_name
+          in: path
+          description: Название песни
+          required: true
+          schema:
+            type: string
+        - name: performer_name
+          in: path
+          description: Имя исполнителя
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешный ответ с деталями песни
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Song'
+        "500":
+          description: Ошибка на сервере
+
+  /song/delete/{id}:
+    delete:
+      summary: Удаление песни
+      description: Удаляет песню по ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID песни
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Песня успешно удалена
+        "500":
+          description: Ошибка на сервере
+
+  /song/text/{song_name}/{performer_name}:
+    get:
+      summary: Получение текста песни
+      description: Возвращает текст песни по названию песни и имени исполнителя.
+      parameters:
+        - name: song_name
+          in: path
+          description: Название песни
+          required: true
+          schema:
+            type: string
+        - name: performer_name
+          in: path
+          description: Имя исполнителя
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешный ответ с текстом песни
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        "500":
+          description: Ошибка на сервере
+
+  /song/filters:
+    get:
+      summary: Фильтрация песен
+      description: Возвращает список песен, соответствующих фильтрам.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SongFilter'
+      responses:
+        "200":
+          description: Список песен, соответствующих фильтрам
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Song'
+        "500":
+          description: Ошибка на сервере
+
+components:
+  schemas:
+    Song:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Идентификатор песни
+        song_name:
+          type: string
+          description: Название песни
+        performer_name:
+          type: string
+          description: Имя исполнителя
+        link:
+          type: string
+          description: Ссылка на песню
+        song_text:
+          type: string
+          description: Текст песни
+        release_date:
+          type: string
+          format: date
+          description: Дата релиза
+        created_at:
+          type: string
+          format: date-time
+          description: Дата создания записи
+
+    UpdateSong:
+      type: object
+      properties:
+        song_name:
+          type: string
+          description: Название песни
+        performer_name:
+          type: string
+          description: Имя исполнителя
+        link:
+          type: string
+          description: Ссылка на песню
+        song_text:
+          type: string
+          description: Текст песни
+        release_date:
+          type: string
+          format: date
+          description: Дата релиза
+
+    SongFilter:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Идентификатор песни для фильтрации
+        song_name:
+          type: string
+          description: Название песни для фильтрации
+        performer_name:
+          type: string
+          description: Имя исполнителя для фильтрации
+        release_date:
+          type: string
+          format: date
+          description: Дата релиза для фильтрации
+        limit:
+          type: integer
+          description: Лимит результатов
+        offset:
+          type: integer
+          description: Смещение результатов

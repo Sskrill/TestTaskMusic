@@ -95,6 +95,7 @@ func (h *Handler) getDetailsSong(w http.ResponseWriter, r *http.Request) {
 		resp, _ := json.Marshal(domain.Error{Msg: err.Error()})
 		w.Write(resp)
 	}
+	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(resp)
 
